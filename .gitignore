@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment
+.env
+!.env.example
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
