@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     twilio_from_number: str = ""
     sendgrid_api_key: str = ""
     sendgrid_from_email: str = ""
+    admin_username: str = "admin"
+    admin_password: str = "admin1234"
 
     class Config:
         env_file = ".env"

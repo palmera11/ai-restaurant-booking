@@ -1,10 +1,19 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.errors import AppError
-from src.routers import availability, bookings, guests, waitlist, config, tables
+from src.routers import availability, bookings, guests, waitlist, config, tables, auth
 
 app = FastAPI(title="Restaurant Booking Engine", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(availability.router, prefix="/api/v1")
 app.include_router(bookings.router, prefix="/api/v1")
@@ -12,6 +21,7 @@ app.include_router(guests.router, prefix="/api/v1")
 app.include_router(waitlist.router, prefix="/api/v1")
 app.include_router(config.router, prefix="/api/v1")
 app.include_router(tables.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
 
 
 @app.exception_handler(AppError)
