@@ -57,13 +57,22 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <button
-        onClick={handleLogout}
-        className="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all w-full text-left"
-        style={{ color: "var(--color-apple-red)" }}
-      >
-        <span>↩</span> Sign out
-      </button>
+      <div className="space-y-1 mt-4">
+        <Link
+          href="/book"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all w-full"
+          style={{ color: "var(--color-apple-blue)" }}
+        >
+          <span>←</span> Book a table
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all w-full text-left"
+          style={{ color: "var(--color-apple-red)" }}
+        >
+          <span>↩</span> Sign out
+        </button>
+      </div>
     </aside>
   );
 }
