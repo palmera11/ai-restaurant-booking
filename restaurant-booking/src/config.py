@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     sendgrid_from_email: str = ""
     admin_username: str = "admin"
     admin_password: str = "admin1234"
+    anthropic_api_key: str = ""
 
     class Config:
         env_file = ".env"

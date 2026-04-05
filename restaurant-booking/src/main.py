@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.errors import AppError
-from src.routers import availability, bookings, guests, waitlist, config, tables, auth
+from src.routers import availability, bookings, guests, waitlist, config, tables, auth, voice
 
 app = FastAPI(title="Restaurant Booking Engine", version="1.0.0")
 
@@ -22,6 +22,7 @@ app.include_router(waitlist.router, prefix="/api/v1")
 app.include_router(config.router, prefix="/api/v1")
 app.include_router(tables.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
+app.include_router(voice.router, prefix="/api/v1")
 
 
 @app.exception_handler(AppError)
