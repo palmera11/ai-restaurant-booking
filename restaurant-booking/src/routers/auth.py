@@ -12,6 +12,7 @@ def _make_token(restaurant_id: str) -> str:
     payload = {
         "sub": "admin",
         "restaurant_id": restaurant_id,
+        "role": "owner",
         "exp": datetime.utcnow() + timedelta(hours=24),
     }
     return jwt.encode(payload, settings.secret_key, algorithm="HS256")

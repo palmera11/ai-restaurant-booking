@@ -36,6 +36,7 @@ export interface BookingOut {
   booked_via: string;
   confirmation_code: string;
   created_at: string;
+  notification_sent: boolean;
 }
 
 export interface GuestOut {

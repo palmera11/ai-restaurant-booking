@@ -12,17 +12,19 @@ from src.schemas.guest import GuestOut, GuestUpdateIn
 router = APIRouter(tags=["guests"])
 
 
-@router.get("/guests", response_model=GuestOut)
-def lookup_guest(
-    phone: str = Query(...),
+@router.get("/guests", response_model=list[GuestOut])
+def list_or_lookup_guests(
+    phone: str | None = Query(None),
     tenant: Tenant = CurrentTenant,
     db: Session = Depends(get_db),
 ):
     set_rls(db, str(tenant.restaurant_id))
-    guest = db.query(Guest).filter(Guest.restaurant_id == tenant.restaurant_id, Guest.phone == phone).first()
-    if not guest:
-        raise GuestNotFoundError()
-    return guest
+    if phone:
+        guest = db.query(Guest).filter(Guest.restaurant_id == tenant.restaurant_id, Guest.phone == phone).first()
+        if not guest:
+            raise GuestNotFoundError()
+        return [guest]
+    return db.query(Guest).filter(Guest.restaurant_id == tenant.restaurant_id).order_by(Guest.name).all()
 
 
 @router.get("/guests/{guest_id}", response_model=GuestOut)

@@ -20,7 +20,7 @@ async function fetcher(url: string) {
 
 export default function GuestsPage() {
   const [search, setSearch] = useState("");
-  const { data: guests = [], isLoading } = useSWR<Guest[]>("/guests", fetcher);
+  const { data: guests = [], isLoading } = useSWR<Guest[]>("/guests", fetcher, { refreshInterval: 30000 });
 
   const filtered = guests.filter(
     (g) =>

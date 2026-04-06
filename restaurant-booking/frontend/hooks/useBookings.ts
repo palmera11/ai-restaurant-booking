@@ -19,8 +19,13 @@ async function fetcher(url: string) {
   return resp.data;
 }
 
-export function useBookings(date?: string) {
-  const url = date ? `/bookings?date=${date}` : "/bookings";
+export function useBookings(date?: string, status?: string, guestName?: string) {
+  const params = new URLSearchParams();
+  if (date) params.append("date", date);
+  if (status) params.append("status", status);
+  if (guestName) params.append("guest_name", guestName);
+  const query = params.toString();
+  const url = query ? `/bookings?${query}` : "/bookings";
   const { data, error, mutate } = useSWR<AdminBooking[]>(url, fetcher, { refreshInterval: 30000 });
   return { bookings: data ?? [], loading: !data && !error, error, mutate };
 }

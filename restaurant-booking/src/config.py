@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    database_url: str
+    database_url: str = "postgresql+psycopg://postgres:password@localhost:5432/restaurant_booking"
     secret_key: str
     twilio_account_sid: str = ""
     twilio_auth_token: str = ""

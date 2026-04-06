@@ -12,7 +12,7 @@ from src.voice.twiml import say_and_gather, say_and_hangup, greet
 router = APIRouter(prefix="/voice", tags=["voice"])
 
 # Replace with your real restaurant UUID once seeded in the DB
-RESTAURANT_ID = "00000000-0000-0000-0000-000000000001"
+RESTAURANT_ID = "1194490b-1aa1-4500-87ce-53bd6441baec"
 GATHER_URL = "/api/v1/voice/gather"
 
 

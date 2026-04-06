@@ -22,4 +22,4 @@ def get_db():
 
 def set_rls(db, restaurant_id: str) -> None:
     """Set the PostgreSQL session variable used by RLS policies."""
-    db.execute(text("SET LOCAL app.restaurant_id = :rid"), {"rid": restaurant_id})
+    db.execute(text(f"SET LOCAL app.restaurant_id = '{restaurant_id}'"))

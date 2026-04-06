@@ -50,7 +50,7 @@ def dispatch_notification(
     booking: Booking | None = None,
     waitlist_entry: WaitlistEntry | None = None,
     notif_type: NotifType = NotifType.confirmation,
-) -> None:
+) -> bool:
     assert booking is not None or waitlist_entry is not None
 
     if booking:
@@ -85,6 +85,7 @@ def dispatch_notification(
     )
     db.add(log)
     db.flush()
+    return success
 
 
 def _build_message(notif_type: NotifType, booking: Booking) -> str:

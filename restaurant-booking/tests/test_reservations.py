@@ -144,3 +144,64 @@ def test_cancel_triggers_waitlist_promotion(db, restaurant, table, lunch_slot, g
     cancel_booking(db, booking, restaurant)
     db.refresh(entry)
     assert entry.status == WaitlistStatus.notified
+
+
+def test_get_booking_by_code_found(db, restaurant, table, lunch_slot, guest):
+    from src.models import Booking
+    from src.database import set_rls
+    monday = date(2026, 4, 6)
+    booking = create_booking(
+        db, restaurant=restaurant, table=table, guest=guest,
+        slot_date=monday, slot_start_time=time(12, 0),
+        duration_minutes=90, party_size=2,
+        booked_via=Channel.web, special_requests=None,
+    )
+    found = db.query(Booking).filter(
+        Booking.confirmation_code == booking.confirmation_code,
+        Booking.restaurant_id == restaurant.id,
+    ).first()
+    assert found is not None
+    assert found.id == booking.id
+
+
+def test_list_bookings_guest_name_filter(db, restaurant, table, lunch_slot, guest):
+    import uuid as _uuid
+    from src.models import Booking, Guest, LocationType, Table
+    from src.database import set_rls
+
+    set_rls(db, str(restaurant.id))
+    monday = date(2026, 4, 6)
+    create_booking(
+        db, restaurant=restaurant, table=table, guest=guest,
+        slot_date=monday, slot_start_time=time(12, 0),
+        duration_minutes=90, party_size=2,
+        booked_via=Channel.web, special_requests=None,
+    )
+    bob_guest = Guest(
+        id=_uuid.uuid4(), restaurant_id=restaurant.id,
+        name="Bob", phone="+66800000099", preferred_channel=Channel.web,
+    )
+    db.add(bob_guest)
+    table2 = Table(
+        id=_uuid.uuid4(), restaurant_id=restaurant.id,
+        label="T2", capacity=4, location_type=LocationType.indoor, is_active=True,
+    )
+    db.add(table2)
+    db.flush()
+    create_booking(
+        db, restaurant=restaurant, table=table2, guest=bob_guest,
+        slot_date=monday, slot_start_time=time(12, 0),
+        duration_minutes=90, party_size=2,
+        booked_via=Channel.web, special_requests=None,
+    )
+    results = (
+        db.query(Booking)
+        .join(Guest, Booking.guest_id == Guest.id)
+        .filter(
+            Booking.restaurant_id == restaurant.id,
+            Guest.name.ilike("%ali%"),
+        )
+        .all()
+    )
+    assert len(results) == 1
+    assert results[0].guest_id == guest.id

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
 import { NavBar } from "@/components/NavBar";
@@ -15,6 +15,8 @@ export default function ConfirmationPage() {
   const [cancelling, setCancelling] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const notifWarn = searchParams.get("notif_warn") === "1";
 
   useEffect(() => {
     getBookingByCode(code)
@@ -43,6 +45,16 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--color-apple-gray6)" }}>
       <NavBar />
+      {notifWarn && (
+        <div className="max-w-lg mx-auto px-4 pt-4">
+          <div
+            className="rounded-2xl px-4 py-3 text-sm font-medium"
+            style={{ background: "rgba(255,149,0,0.12)", color: "#9a5200" }}
+          >
+            We had a technical error while sending your confirmation message, but your table is booked.
+          </div>
+        </div>
+      )}
       <div className="max-w-lg mx-auto px-4 py-12">
         {loading && (
           <div className="flex justify-center py-20">

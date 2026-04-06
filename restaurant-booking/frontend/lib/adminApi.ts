@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const RESTAURANT_ID = "00000000-0000-0000-0000-000000000001";
+const RESTAURANT_ID = "1194490b-1aa1-4500-87ce-53bd6441baec";
 
 export const adminApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1",

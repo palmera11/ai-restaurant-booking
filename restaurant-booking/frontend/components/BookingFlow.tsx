@@ -63,7 +63,8 @@ export function BookingFlow() {
       special_requests: guest.special_requests || undefined,
     });
     if (result) {
-      router.push(`/confirmation/${result.confirmation_code}`);
+      const suffix = result.notification_sent === false ? "?notif_warn=1" : "";
+      router.push(`/confirmation/${result.confirmation_code}${suffix}`);
     }
   }
 

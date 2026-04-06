@@ -36,5 +36,6 @@ class BookingOut(BaseModel):
     booked_via: str
     confirmation_code: str
     created_at: datetime
+    notification_sent: bool = True
 
     model_config = {"from_attributes": True}
