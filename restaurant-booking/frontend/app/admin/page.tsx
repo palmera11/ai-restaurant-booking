@@ -317,8 +317,151 @@ export default function AdminOverview() {
               )}
             </motion.div>
           </div>
+
+          <Analytics bookings={bookings} />
         </>
       )}
     </div>
   );
 }
+
+const AVG_TICKET = 38; // estimated avg revenue per cover (USD)
+
+function Analytics({ bookings }: { bookings: AdminBookingLite[] }) {
+  // Bucket bookings by meal period using slot_start_time
+  const periods = [
+    { key: "breakfast", label: "Breakfast", color: "#fb7185", range: [6, 10] },
+    { key: "brunch", label: "Brunch", color: "#22c55e", range: [10, 12] },
+    { key: "lunch", label: "Lunch", color: "#a855f7", range: [12, 15] },
+    { key: "tea", label: "Tea", color: "#3b82f6", range: [15, 18] },
+    { key: "dinner", label: "Dinner", color: "#facc15", range: [18, 23] },
+  ] as const;
+
+  function hourOf(b: AdminBookingLite) {
+    return parseInt(b.slot_start_time.split(":")[0], 10);
+  }
+
+  const periodStats = periods.map((p) => {
+    const inRange = bookings.filter((b) => {
+      const h = hourOf(b);
+      return h >= p.range[0] && h < p.range[1];
+    });
+    const covers = inRange.reduce((s, b) => s + (b.party_size || 0), 0);
+    const revenue = covers * AVG_TICKET;
+    const avgPerPax = inRange.length ? revenue / Math.max(1, covers) : 0;
+    return { ...p, count: inRange.length, covers, revenue, avgPerPax };
+  });
+
+  const totalRevenue = periodStats.reduce((s, p) => s + p.revenue, 0);
+  const totalCovers = periodStats.reduce((s, p) => s + p.covers, 0);
+  const peakRev = Math.max(1, ...periodStats.map((p) => p.revenue));
+
+  return (
+    <div className="mt-10">
+      <div className="mb-5 flex items-end justify-between">
+        <div>
+          <div className="text-[12px] font-semibold mb-1" style={{ color: "#7c3aed" }}>OPTIMIZE BUSINESS</div>
+          <h2 className="text-2xl font-bold tracking-tight" style={{ color: "var(--color-n-900)" }}>Make smarter decisions</h2>
+        </div>
+        <div className="text-[12px]" style={{ color: "var(--color-n-500)" }}>
+          Based on {bookings.length} reservations · est. ${AVG_TICKET}/cover
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Revenue by meal */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="lg:col-span-2 rounded-2xl bg-white p-6"
+          style={{ border: "1px solid var(--color-n-200)", boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 12px 32px -16px rgba(15,23,42,0.18)" }}
+        >
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="text-[15px] font-semibold" style={{ color: "var(--color-n-900)" }}>Revenue (USD) by meal</h3>
+              <p className="text-[12px]" style={{ color: "var(--color-n-500)" }}>Estimated from confirmed covers today</p>
+            </div>
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "#7c3aed15", color: "#7c3aed" }}>
+              Total ${totalRevenue.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex items-end gap-4 h-44 pl-10 relative">
+            <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[10px]" style={{ color: "var(--color-n-400)" }}>
+              <span>${Math.round(peakRev).toLocaleString()}</span>
+              <span>${Math.round(peakRev * 0.66).toLocaleString()}</span>
+              <span>${Math.round(peakRev * 0.33).toLocaleString()}</span>
+              <span>$0</span>
+            </div>
+            {periodStats.map((p, i) => (
+              <div key={p.key} className="flex-1 flex flex-col items-center gap-2">
+                <div className="text-[10px] font-semibold" style={{ color: "var(--color-n-700)" }}>
+                  ${p.revenue.toLocaleString()}
+                </div>
+                <motion.div
+                  initial={{ height: 0 }}
+                  whileInView={{ height: `${(p.revenue / peakRev) * 100}%` }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.15 + i * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full rounded-t-md min-h-[4px]"
+                  style={{ background: p.color }}
+                />
+                <span className="text-[10px]" style={{ color: "var(--color-n-500)" }}>{p.label}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Percentage of total */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="rounded-2xl bg-white p-6"
+          style={{ border: "1px solid var(--color-n-200)", boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 12px 32px -16px rgba(15,23,42,0.18)" }}
+        >
+          <h3 className="text-[15px] font-semibold mb-1" style={{ color: "var(--color-n-900)" }}>% of total revenue</h3>
+          <p className="text-[12px] mb-4" style={{ color: "var(--color-n-500)" }}>Share by meal period</p>
+          {totalCovers === 0 ? (
+            <div className="text-[13px] py-8 text-center" style={{ color: "var(--color-n-400)" }}>No data yet</div>
+          ) : (
+            <div className="space-y-3">
+              {periodStats.map((p, i) => {
+                const pct = totalRevenue ? (p.revenue / totalRevenue) * 100 : 0;
+                return (
+                  <div key={p.key}>
+                    <div className="flex items-center justify-between text-[12px] mb-1">
+                      <span style={{ color: "var(--color-n-700)" }}>{p.label}</span>
+                      <span className="font-semibold" style={{ color: "var(--color-n-900)" }}>{pct.toFixed(0)}%</span>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--color-n-100)" }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${pct}%` }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 + i * 0.06, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                        className="h-full rounded-full"
+                        style={{ background: p.color }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--color-n-100)" }}>
+            <div className="flex items-center justify-between text-[12px]">
+              <span style={{ color: "var(--color-n-500)" }}>Total covers</span>
+              <span className="font-semibold" style={{ color: "var(--color-n-900)" }}>{totalCovers}</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+type AdminBookingLite = { slot_start_time: string; party_size: number };
+

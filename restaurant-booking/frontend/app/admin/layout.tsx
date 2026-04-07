@@ -1,11 +1,17 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import Sidebar from "@/components/admin/Sidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { loading } = useAdminAuth();
+  const pathname = usePathname();
+  const isLogin = pathname === "/admin/login";
 
-  if (loading) {
+  if (isLogin) return <>{children}</>;
+
+  const { token, loading } = useAdminAuth();
+
+  if (loading || !token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div
