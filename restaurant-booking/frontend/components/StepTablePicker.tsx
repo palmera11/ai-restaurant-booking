@@ -14,7 +14,7 @@ interface Props {
 }
 
 const LOCATION_ICONS: Record<string, string> = {
-  indoor: "🏠", outdoor: "🌿", bar: "🍸", private: "🔒",
+  indoor: "Inside", outdoor: "Patio", bar: "Bar", private: "Private",
 };
 
 export function StepTablePicker({
@@ -22,7 +22,6 @@ export function StepTablePicker({
 }: Props) {
   const { tables, slots, loading, error, fetchTables, fetchSlots } = useAvailability();
 
-  // Load available tables for default time "19:00:00"
   useEffect(() => {
     if (date) fetchTables(date, "19:00:00", partySize);
   }, [date, partySize]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -34,22 +33,26 @@ export function StepTablePicker({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="w-8 h-8 rounded-full border-2 border-gray-200 border-t-gray-900 animate-spin" />
+        <div
+          className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin"
+          style={{ borderColor: "var(--color-n-300)", borderTopColor: "var(--color-n-800)" }}
+        />
       </div>
     );
   }
 
   if (error) {
-    return <p className="text-center py-8 text-sm" style={{ color: "var(--color-apple-red)" }}>{error}</p>;
+    return <p className="text-center py-8 text-[13px]" style={{ color: "var(--color-danger)" }}>{error}</p>;
   }
 
   return (
     <div className="space-y-6">
-      {/* Tables */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Choose a table</label>
+        <label className="block text-[13px] font-medium mb-3" style={{ color: "var(--color-n-700)" }}>
+          Choose a table
+        </label>
         {tables.length === 0 ? (
-          <p className="text-sm text-center py-6" style={{ color: "var(--color-apple-gray1)" }}>
+          <p className="text-[13px] text-center py-6" style={{ color: "var(--color-n-500)" }}>
             No tables available for this date. Try another day.
           </p>
         ) : (
@@ -59,18 +62,19 @@ export function StepTablePicker({
               return (
                 <motion.button
                   key={t.table_id}
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => onTableSelect(t)}
-                  className="p-4 rounded-2xl text-left transition-all border"
+                  className="p-4 rounded-xl text-left transition-all"
                   style={{
-                    background: isSelected ? "#1c1c1e" : "rgba(255,255,255,0.8)",
-                    borderColor: isSelected ? "#1c1c1e" : "rgba(209,209,214,0.5)",
-                    color: isSelected ? "#fff" : "#1c1c1e",
+                    background: isSelected ? "var(--color-n-900)" : "#fff",
+                    border: `1px solid ${isSelected ? "var(--color-n-900)" : "var(--color-n-200)"}`,
+                    color: isSelected ? "#fff" : "var(--color-n-900)",
                   }}
                 >
-                  <div className="text-xl mb-1">{LOCATION_ICONS[t.location_type] ?? "🪑"}</div>
-                  <div className="font-semibold text-sm">{t.label}</div>
-                  <div className="text-xs mt-0.5 opacity-70">Up to {t.capacity} guests · {t.location_type}</div>
+                  <div className="text-[13px] font-semibold">{t.label}</div>
+                  <div className="text-[12px] mt-1" style={{ opacity: 0.65 }}>
+                    {t.capacity} guests max &middot; {LOCATION_ICONS[t.location_type] ?? t.location_type}
+                  </div>
                 </motion.button>
               );
             })}
@@ -78,12 +82,13 @@ export function StepTablePicker({
         )}
       </div>
 
-      {/* Time slots */}
       {selectedTable && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">Choose a time</label>
+          <label className="block text-[13px] font-medium mb-3" style={{ color: "var(--color-n-700)" }}>
+            Choose a time
+          </label>
           {slots.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--color-apple-gray1)" }}>No slots available for this table.</p>
+            <p className="text-[13px]" style={{ color: "var(--color-n-500)" }}>No slots available for this table.</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {slots.map((s) => {
@@ -94,11 +99,11 @@ export function StepTablePicker({
                     key={s.slot_id}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onSlotSelect(s)}
-                    className="px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                    className="px-4 py-2 rounded-lg text-[13px] font-medium transition-all"
                     style={{
-                      background: isSelected ? "var(--color-apple-blue)" : "rgba(255,255,255,0.8)",
-                      color: isSelected ? "#fff" : "#1c1c1e",
-                      border: `1px solid ${isSelected ? "var(--color-apple-blue)" : "rgba(209,209,214,0.5)"}`,
+                      background: isSelected ? "var(--color-n-900)" : "#fff",
+                      color: isSelected ? "#fff" : "var(--color-n-700)",
+                      border: `1px solid ${isSelected ? "var(--color-n-900)" : "var(--color-n-200)"}`,
                     }}
                   >
                     {time}

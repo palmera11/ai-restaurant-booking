@@ -23,16 +23,19 @@ export function StepDatePicker({ partySize, onPartySizeChange, onSelect }: Props
     <div className="space-y-6">
       {/* Party size */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Party size</label>
+        <label className="block text-[13px] font-medium mb-2.5" style={{ color: "var(--color-n-700)" }}>
+          Party size
+        </label>
         <div className="flex gap-2 flex-wrap">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
             <button
               key={n}
               onClick={() => onPartySizeChange(n)}
-              className="w-10 h-10 rounded-xl text-sm font-medium transition-all"
+              className="w-10 h-10 rounded-lg text-[13px] font-medium transition-all"
               style={{
-                background: partySize === n ? "#1c1c1e" : "var(--color-apple-gray5)",
-                color: partySize === n ? "#fff" : "#3c3c43",
+                background: partySize === n ? "var(--color-n-900)" : "var(--color-n-100)",
+                color: partySize === n ? "#fff" : "var(--color-n-600)",
+                border: `1px solid ${partySize === n ? "var(--color-n-900)" : "var(--color-n-200)"}`,
               }}
             >
               {n}
@@ -43,14 +46,15 @@ export function StepDatePicker({ partySize, onPartySizeChange, onSelect }: Props
 
       {/* Date grid */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Select a date</label>
+        <label className="block text-[13px] font-medium mb-2.5" style={{ color: "var(--color-n-700)" }}>
+          Select a date
+        </label>
         <div className="grid grid-cols-7 gap-1">
-          {["S","M","T","W","T","F","S"].map((d, i) => (
-            <div key={i} className="text-center text-xs font-medium py-1" style={{ color: "var(--color-apple-gray2)" }}>
+          {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d, i) => (
+            <div key={i} className="text-center text-[11px] font-medium py-1.5" style={{ color: "var(--color-n-400)" }}>
               {d}
             </div>
           ))}
-          {/* offset for first day */}
           {Array.from({ length: today.getDay() }).map((_, i) => (
             <div key={`empty-${i}`} />
           ))}
@@ -60,12 +64,13 @@ export function StepDatePicker({ partySize, onPartySizeChange, onSelect }: Props
             return (
               <motion.button
                 key={d.toISOString()}
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.92 }}
                 onClick={() => pick(d)}
-                className="aspect-square rounded-xl text-sm font-medium transition-all flex items-center justify-center"
+                className="aspect-square rounded-lg text-[13px] font-medium transition-all flex items-center justify-center"
                 style={{
-                  background: isSelected ? "#1c1c1e" : isToday ? "rgba(0,122,255,0.1)" : "transparent",
-                  color: isSelected ? "#fff" : isToday ? "var(--color-apple-blue)" : "#1c1c1e",
+                  background: isSelected ? "var(--color-n-900)" : "transparent",
+                  color: isSelected ? "#fff" : isToday ? "var(--color-brand)" : "var(--color-n-700)",
+                  border: isToday && !isSelected ? "1px solid var(--color-brand)" : "1px solid transparent",
                 }}
               >
                 {format(d, "d")}

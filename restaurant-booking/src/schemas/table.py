@@ -15,6 +15,8 @@ class TableUpdateIn(BaseModel):
     label: str | None = None
     capacity: int | None = None
     location_type: str | None = None
+    floor_plan_x: float | None = None
+    floor_plan_y: float | None = None
 
 
 class TableOut(BaseModel):

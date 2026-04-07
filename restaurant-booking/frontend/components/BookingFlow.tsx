@@ -12,9 +12,9 @@ import type { TableSlotOut, SlotOut } from "@/lib/types";
 const STEPS = ["Date & Guests", "Table & Time", "Your details", "Confirm"];
 
 const slideVariants = {
-  enter: (dir: number) => ({ x: dir > 0 ? 40 : -40, opacity: 0 }),
+  enter: (dir: number) => ({ x: dir > 0 ? 30 : -30, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({ x: dir > 0 ? -40 : 40, opacity: 0 }),
+  exit: (dir: number) => ({ x: dir > 0 ? -30 : 30, opacity: 0 }),
 };
 
 interface GuestDetails {
@@ -69,33 +69,58 @@ export function BookingFlow() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pb-16">
-      {/* Step indicator */}
-      <div className="flex items-center gap-2 mb-8 pt-8">
-        {STEPS.map((label, i) => (
-          <div key={label} className="flex items-center gap-2 flex-1">
+    <div className="min-h-screen" style={{ background: "var(--color-n-100)" }}>
+      <div className="max-w-xl mx-auto px-4 pt-10 pb-16">
+        {/* Restaurant header card */}
+        <div
+          className="bg-white rounded-t-2xl p-6 flex items-center gap-4"
+          style={{ border: "1px solid var(--color-n-200)", borderBottom: "none" }}
+        >
+          <div
+            className="w-14 h-14 rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0"
+            style={{ background: "var(--color-n-900)" }}
+          >
+            M
+          </div>
+          <div className="min-w-0">
+            <div className="text-[11px] uppercase tracking-wider font-medium" style={{ color: "var(--color-n-500)" }}>
+              Reservation at
+            </div>
+            <h1 className="text-lg font-semibold truncate" style={{ color: "var(--color-n-900)" }}>
+              Mesa Restaurant
+            </h1>
+            <div className="text-[12px]" style={{ color: "var(--color-n-500)" }}>
+              Fine dining · Open today
+            </div>
+          </div>
+        </div>
+
+        {/* Step tabs */}
+        <div
+          className="bg-white flex"
+          style={{ borderLeft: "1px solid var(--color-n-200)", borderRight: "1px solid var(--color-n-200)" }}
+        >
+          {STEPS.map((label, i) => (
             <div
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 transition-all"
+              key={label}
+              className="flex-1 text-center py-3 text-[11px] font-medium uppercase tracking-wider transition-colors"
               style={{
-                background: i < step ? "var(--color-apple-green)" : i === step ? "#1c1c1e" : "var(--color-apple-gray5)",
-                color: i <= step ? "#fff" : "var(--color-apple-gray2)",
+                color: i === step ? "var(--color-n-900)" : "var(--color-n-400)",
+                borderBottom: i === step ? "2px solid var(--color-n-900)" : "2px solid var(--color-n-200)",
               }}
             >
-              {i < step ? "✓" : i + 1}
+              <span className="hidden sm:inline">{i + 1}. {label}</span>
+              <span className="sm:hidden">{i + 1}</span>
             </div>
-            {i < STEPS.length - 1 && (
-              <div
-                className="h-0.5 flex-1 rounded transition-all"
-                style={{ background: i < step ? "var(--color-apple-green)" : "var(--color-apple-gray5)" }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
       {/* Step content */}
-      <div className="glass-card p-6 mb-6 overflow-hidden">
-        <h2 className="text-lg font-semibold text-gray-900 mb-5">{STEPS[step]}</h2>
+      <div
+        className="bg-white rounded-b-2xl p-6 mb-5 overflow-hidden"
+        style={{ border: "1px solid var(--color-n-200)", borderTop: "none" }}
+      >
+        <h2 className="text-base font-semibold mb-5" style={{ color: "var(--color-n-900)" }}>{STEPS[step]}</h2>
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div
             key={step}
@@ -104,7 +129,7 @@ export function BookingFlow() {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
           >
             {step === 0 && (
               <StepDatePicker partySize={partySize} onPartySizeChange={setPartySize} onSelect={setDate} />
@@ -142,24 +167,21 @@ export function BookingFlow() {
       {step < 3 && (
         <div className="flex gap-3">
           {step > 0 && (
-            <button
-              onClick={() => go(step - 1)}
-              className="flex-1 py-3 rounded-2xl text-sm font-medium transition-all"
-              style={{ background: "var(--color-apple-gray5)", color: "#1c1c1e" }}
-            >
+            <button onClick={() => go(step - 1)} className="btn-secondary flex-1">
               Back
             </button>
           )}
           <button
             onClick={() => go(step + 1)}
             disabled={!canAdvance()}
-            className="flex-1 py-3 rounded-2xl text-white text-sm font-semibold transition-all disabled:opacity-40 active:scale-[0.98]"
-            style={{ background: canAdvance() ? "#1c1c1e" : "var(--color-apple-gray3)" }}
+            className="btn-primary flex-1"
+            style={{ opacity: canAdvance() ? 1 : 0.4 }}
           >
             Continue
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }

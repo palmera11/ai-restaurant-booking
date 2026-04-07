@@ -22,9 +22,9 @@ interface Props {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between items-start py-3 border-b last:border-0" style={{ borderColor: "rgba(209,209,214,0.4)" }}>
-      <span className="text-sm" style={{ color: "var(--color-apple-gray1)" }}>{label}</span>
-      <span className="text-sm font-medium text-gray-900 text-right max-w-[60%]">{value}</span>
+    <div className="flex justify-between items-start py-3" style={{ borderBottom: "1px solid var(--color-n-100)" }}>
+      <span className="text-[13px]" style={{ color: "var(--color-n-500)" }}>{label}</span>
+      <span className="text-[13px] font-medium text-right max-w-[60%]" style={{ color: "var(--color-n-900)" }}>{value}</span>
     </div>
   );
 }
@@ -34,13 +34,10 @@ export function StepConfirm({ date, partySize, table, slot, guest, loading, erro
   const timeLabel = slot.start_time.slice(0, 5);
 
   return (
-    <div className="space-y-6">
-      <div className="glass-card p-0 overflow-hidden" style={{ borderRadius: "20px" }}>
-        <div
-          className="px-5 py-4"
-          style={{ background: "rgba(0,122,255,0.05)", borderBottom: "1px solid rgba(0,122,255,0.1)" }}
-        >
-          <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-apple-blue)" }}>
+    <div className="space-y-5">
+      <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--color-n-200)" }}>
+        <div className="px-5 py-3" style={{ background: "var(--color-n-50)", borderBottom: "1px solid var(--color-n-200)" }}>
+          <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: "var(--color-n-500)" }}>
             Booking summary
           </p>
         </div>
@@ -57,7 +54,10 @@ export function StepConfirm({ date, partySize, table, slot, guest, loading, erro
       </div>
 
       {error && (
-        <p className="text-sm text-center px-4 py-3 rounded-xl" style={{ background: "rgba(255,59,48,0.08)", color: "var(--color-apple-red)" }}>
+        <p
+          className="text-[13px] text-center px-4 py-3 rounded-lg"
+          style={{ background: "rgba(220,38,38,0.06)", color: "var(--color-danger)" }}
+        >
           {error}
         </p>
       )}
@@ -65,13 +65,13 @@ export function StepConfirm({ date, partySize, table, slot, guest, loading, erro
       <button
         onClick={onSubmit}
         disabled={loading}
-        className="w-full py-4 rounded-2xl text-white font-semibold text-base transition-all active:scale-[0.98] disabled:opacity-50"
-        style={{ background: loading ? "var(--color-apple-gray3)" : "#1c1c1e" }}
+        className="btn-primary w-full"
+        style={{ padding: "14px", opacity: loading ? 0.6 : 1 }}
       >
-        {loading ? "Confirming reservation…" : "Confirm reservation"}
+        {loading ? "Confirming..." : "Confirm reservation"}
       </button>
 
-      <p className="text-xs text-center" style={{ color: "var(--color-apple-gray2)" }}>
+      <p className="text-[12px] text-center" style={{ color: "var(--color-n-400)" }}>
         By confirming, you agree to our cancellation policy.
       </p>
     </div>
